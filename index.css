@@ -1,0 +1,11 @@
+#selectNumber{
+    margin: 20px; 
+    color: white;
+    font-size: 13px;
+    padding: 10px 8px 10px 14px;
+    background: black;
+    border: 1px solid white;
+    border-radius: 6px;
+    position: relative;
+    text-align: center;
+  }
