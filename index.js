@@ -51,9 +51,25 @@ function newphoto(date){
     .then(response=>response.json())
     .then(json=>{
       console.log(json)
-      document.getElementById("image").innerHTML += "<img src='" + json.url + "' id='day_img'>"
+      var display = json.url;
+      document.getElementById("image").innerHTML = "<img src='" + display + "' id='day_img'>"
     })
   }catch(error){
     console.log(error)
   }
+}
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
 }

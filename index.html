@@ -2,12 +2,22 @@
 <html>
 <head>
     <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div id="image"></div>
-    <select id="selectNumber" onchange="newphoto(this)";>
-        <option>Choose a number</option>
-    </select>
-    <script src="index.js"></script>
+<body style="background-color: #ffffff;">
+<div>
+    <img src="images/nasapi.png" id="logo">
+</div>
+<div id="main">
+    <button type="button" class="collapsible">Astronomy Picture Of The Day</button>
+    <div class="content">
+        <div id="image" id="apod"></div>
+        <select id="selectNumber" onchange="newphoto(this)";></select>
+        <p class="paragraphs">NASA runs Astronomy Picture Of Day, which is exqactly as the name describes: an Astronomy Photo each day since June 16 1995.</p>
+    </div>    
+</div>
+<script src="index.js"></script>
 </body>
 </html>

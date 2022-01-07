@@ -1,11 +1,81 @@
 #selectNumber{
     margin: 20px; 
-    color: white;
+    color: black;
     font-size: 13px;
     padding: 10px 8px 10px 14px;
-    background: black;
-    border: 1px solid white;
+    background: white;
+    border: 1px solid black;
     border-radius: 6px;
     position: relative;
     text-align: center;
-  }
+    display:block;
+    margin:auto;
+}
+
+#logo{
+  pointer-events: none;
+  cursor: default;
+  width: 50%;
+  height: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.paragraphs{
+  font-family: 'Orbitron', sans-serif;
+}
+
+.collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+.content {
+  padding: 0 18px;
+  background-color: #e6e6e6;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+.collapsible:after {
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  font-size: 13px;
+  color: white;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+#main{
+  border-radius: 10px;
+  background-color: #e6e6e6;
+  margin-left: 10%;
+  margin-right: 10%;
+
+}
+
+#main img{
+  display:block;
+  margin:auto;
+  padding-top: 5%;
+  padding-bottom: 2%;
+  height: 70%;
+  width: 70%;
+}
