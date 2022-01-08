@@ -48,11 +48,20 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function loading(time){
-  document.getElementById("APOD").innerHTML = 'loading....';
+//this is a faux loading function. It's used to give the user interaction while waiting for different elements to load.
+async function loading(time, div, replace){
+  document.getElementById(div).innerHTML = 'loading....';
   await sleep(time);
-  document.getElementById("APOD").innerHTML = 'Astronomy Picture Of The Day';
-  document.getElementById("APOD").click();
+  document.getElementById(div).innerHTML = replace;
+  document.getElementById(div).click();
+}
+// this is used for elements which require time on page opening such as NEOWS
+function loadingOpen(div){
+  document.getElementById(div).innerHTML = 'loading....';
+}
+
+function loadingOpen2(div, replace){
+  document.getElementById(div).innerHTML = replace;
 }
 
 async function newphoto(date){
@@ -85,7 +94,7 @@ async function newphoto(date){
     })
   }catch(error){
     document.getElementById("image").innerHTML = "<img src='images/visualdon.gif' id='day_img'>"
-    loading(1500)
+    loading(1500, "APOD", 'Astronomy Picture Of The Day')
     console.log(error)
   }
 }
@@ -110,26 +119,31 @@ function neows(){
   var dates = year();
   var today = dates[dates.length - 1];
   var pWeek = dates[dates.length - 7];
-  var lastweek = dates.slice(-7);
+  var lastweek = dates.slice(-8);
   var value= "https://api.nasa.gov/neo/rest/v1/feed?start_date=" + pWeek + "&end_date=" + today + "&api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ"
   try{
     fetch(value)
     .then(response=>response.json())
     .then(json=>{
       console.log(json)
-      var value = json.near_earth_objects[today].length;
-      document.getElementById("test").innerHTML = value;
-
       for(var i = lastweek.length - 1; i > 0; i--){
         var day = lastweek[i];
         if (json.near_earth_objects.hasOwnProperty(day)){
-          console.log(day);
+          loadingOpen("NEOWS")
+          document.getElementById("tables").innerHTML += "<table class='neowsTables' id= '" + day + "'><tr><th>Absolute magnitude</th><th>I.D.</th><th>Potentially Dangerous</th><th>Sentry object</th></tr>";
           for(var x = json.near_earth_objects[day].length; x > 0; x--){
-            var neows = json.near_earth_objects[day][x];
+            document.getElementById("tables").innerHTML += "<tr>";
+            var absoluteMag = json.near_earth_objects[day][x-1].absolute_magnitude_h;
+            var identification = json.near_earth_objects[day][x-1].id;
+            var danger = json.near_earth_objects[day][x-1].is_potentially_hazardous_asteroid;
+            var sentry = json.near_earth_objects[day][x-1].is_sentry_object;
+            document.getElementById(day).innerHTML += "<td>" + absoluteMag + "</td><td>" + identification + "</td><td>" + danger + "</td><td>" + sentry + "</td>";
+            document.getElementById(day).innerHTML += "</tr>";
             console.log(neows);
-
           }
         }
+        document.getElementById("tables").innerHTML += "</table>";
+        loadingOpen2("NEOWS", 'Near Earth Object Web Service')
       }
     })
   }catch(error){

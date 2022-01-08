@@ -43,7 +43,8 @@
   margin-right: auto;
 }
 
-#apoddesc{
+
+#apoddesc, #NEOWSP{
   text-align: center;
   display: block;
   margin-left: auto;
@@ -91,6 +92,10 @@
   content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
 
+.neowsTables, th, td {
+  border:1px solid black;
+}
+
 #main{
   border-radius: 10px;
   background-color: white;
@@ -107,4 +112,29 @@
   padding-bottom: 2%;
   height: 70%;
   width: 70%;
+}
+
+.neowsTables {
+  font-family: 'Orbitron', sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.neowsTables td, .neowsTables th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.neowsTables tr:nth-child(even){background-color: #f2f2f2;}
+
+.neowsTables tr:hover {background-color: #ddd;}
+
+.neowsTables th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: black;
+  color: white;
 }
