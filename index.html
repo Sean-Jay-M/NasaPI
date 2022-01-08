@@ -11,7 +11,16 @@
     <img src="images/nasapi.png" id="logo">
 </div>
 <div id="main">
-    <button type="button" class="collapsible" id="NEOWS">Near Earth Object Web Service</button>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+        <span class="close"></span>
+        <div class="asteroidSize">
+            <canvas id="myCanvas" width="500" height="250" style="border:1px solid #d3d3d3;"></canvas>
+            <p class="paragraphs" id="asteroidDesc"></p>
+        </div>
+        </div>
+  </div>
+    <button type="button" class="collapsible NEOWSC" id="NEOWS">Near Earth Object Web Service</button>
     <div class="content">
         <p class="paragraphs" id="NEOWSP">The Near Earth Object Web Service or N.E.O.W.S provides deep data pertaining to Asteroids which come into close proximity to Earth. The API is maintained by the SpaceRocks Team.</p>
         <div id="tables"></div>
@@ -28,6 +37,7 @@
         <p class="paragraphs" id="apoddesc">NASA runs Astronomy Picture Of Day, which is exqactly as the name describes: an Astronomy Photo each day since June 16 1995.</p>
     </div> 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <script src="index.js"></script>
 </body>
 </html>
