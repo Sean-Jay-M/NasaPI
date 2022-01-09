@@ -1,5 +1,6 @@
-fetchData()
+var dateList = []
 year()
+fetchData()
 function fetchData(){
     try{
       fetch('https://api.nasa.gov/planetary/apod?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ')
@@ -33,7 +34,6 @@ function year(){
     };
 
     var select = document.getElementById("selectNumber"); 
-    console.log(listDate);
     for(var i = listDate.length - 1; i > 0; i--) {
         var opt = listDate[i];
         var el = document.createElement("option");
@@ -41,22 +41,26 @@ function year(){
         el.value = opt;
         select.appendChild(el);
     }
-  return listDate
+    dateList = listDate;
 }
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+var apodOpen = true;
+
 //this is a faux loading function. It's used to give the user interaction while waiting for different elements to load.
 async function loading(time, div, replace){
+  apodOpen = false;
   document.getElementById(div).innerHTML = 'loading....';
   await sleep(time);
   document.getElementById(div).innerHTML = replace;
+  apodOpen = true;
   document.getElementById(div).click();
 }
 
-async function newphoto(date){
+function newphoto(date){
   document.getElementById("APOD").click();
   var newapi = 'https://api.nasa.gov/planetary/apod?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ';
   newapi += "&date="
@@ -95,7 +99,7 @@ async function newphoto(date){
 var block = true; 
 
 // this is used for elements which require time on page opening such as NEOWS
-function loadingbloack(){
+function loadingblock(){
   document.getElementById("NEOWS").innerHTML = "loading....";
 }
 
@@ -123,11 +127,13 @@ for (y = 0; y < coll.length; y++) {
   });
 }
 
-//open - close.
+//open - close APOD.
 var coll = document.getElementsByClassName("collapsible");
 var i;
 for (i = 0; i < coll.length; i++) {
   coll[i].addEventListener("click", function() {
+    if(apodOpen == false){
+    } else {
     this.classList.toggle("active");
     var content = this.nextElementSibling;
     if (content.style.maxHeight){
@@ -135,12 +141,13 @@ for (i = 0; i < coll.length; i++) {
     } else {
       content.style.maxHeight = content.scrollHeight + "px";
     }
+  }
   });
 }
 
-function neows(){
-  loadingbloack();
-  var dates = year();
+function neows(dateList){
+  loadingblock();
+  var dates = dateList;
   var today = dates[dates.length - 1];
   var pWeek = dates[dates.length - 7];
   var lastweek = dates.slice(-8);
@@ -178,18 +185,26 @@ function neows(){
     console.log(error)
   }
 }
-neows()
+neows(dateList);
 
 var asteroidListMain = {};
+var normalRatio = true;
+var weirdRatio = 0;
 
+//We're dealing in meters here. Where 1 pixel = 1 meter. The ratio between M displayed on the graph to real meter is technically 1px (or 1 meter) = 0.0002645833m
+// For ease of use I used the width of the box field to define the ratio between displayed and real 4000px (or 4 thousand meters) = 1.06m it's also just easier to understand what the user is looking at.
+// In essence what this graph displays is rough 4000 times smaller than the real object it is representing/distance it is to display.. 
 function neowsGraph(identification, day){
   var c = document.getElementById("myCanvas");
   var ctx = c.getContext("2d");
+  // The values provided by the API come in kilometers. Therefore the value needs to be multiplied by 1000 to turn it into meters which is the metric I am using.
   var value = (asteroidListMain[day][identification]) * 1000;
-  //if it is too large to fit in the box
+  //the Box is intended to represent an area of 500m wide and 250m tall. A fairly basic standard which will work with most, but not all asteroids.
+  //if the asteroid will fit into these dimensions.
   if ((value/2) <= 122.5){
-    var fieldWidth1 = 85;
-    var fieldHeight1 = 125;
+    normalRatio = true;
+    var fieldWidth1 = 75;
+    var fieldHeight1 = 120;
     var xPos1 = (document.getElementById("myCanvas").width/2) - (fieldWidth1/2);
     var yPos1 = (document.getElementById("myCanvas").height/2) - (fieldHeight1/2);
     ctx.beginPath();
@@ -198,16 +213,35 @@ function neowsGraph(identification, day){
     ctx.beginPath();
     ctx.rect(xPos1, yPos1, fieldWidth1, fieldHeight1); //85
     ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, 250);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, 250);
+    ctx.lineTo(500, 250);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.font = "10px Arial";
+    ctx.fillText("250M", 3, 10);
+    ctx.font = "10px Arial";
+    ctx.fillText("0M", 5, 245);
+    ctx.font = "10px Arial";
+    ctx.fillText("500M", 467, 245);
   } else {
-    // will alter the ratios 
+    // if it does not, this will alter the ratios.
+    // It works by dividing the size of both the field and the asteroid by the same value until the asteroid will fit in the box. 
+    // Once done it will calculate the new scale and change it accordingly.
+    normalRatio = false;
     var calculation = 1;
     var calculate = true;
     var radius = value/2
     while (calculate){
       var finalRadius = radius / calculation;
       if(finalRadius <= 122.5){
-        var fieldWidth = 85 / calculation;
-        var fieldHeight = 125 / calculation;
+        var fieldWidth = 75 / calculation;
+        var fieldHeight = 120 / calculation;
         var xPos = (document.getElementById("myCanvas").width/2) - (fieldWidth/2);
         var yPos = (document.getElementById("myCanvas").height/2) - (fieldHeight/2);
         ctx.beginPath();
@@ -216,7 +250,24 @@ function neowsGraph(identification, day){
         ctx.beginPath();
         ctx.rect(xPos, yPos, fieldWidth, fieldHeight); //85
         ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, 250);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, 250);
+        ctx.lineTo(500, 250);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.font = "10px Arial";
+        ctx.fillText(250*calculation + "M", 3, 10);
+        ctx.font = "10px Arial";
+        ctx.fillText("0M", 5, 245);
+        ctx.font = "10px Arial";
+        ctx.fillText(500*calculation + "M", 467, 245);
         calculate = false;
+        weirdRatio = calculation;
       }
       calculation += 1;
     }
@@ -224,14 +275,19 @@ function neowsGraph(identification, day){
 }
 
 function neowsDescription(day, asteroid){
-  var dates = year();
+  var dates = dateList;
   var today = dates[dates.length - 1];
   var pWeek = dates[dates.length - 7];
   var value= "https://api.nasa.gov/neo/rest/v1/feed?start_date=" + pWeek + "&end_date=" + today + "&api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ"
   fetch(value)
   .then(response=>response.json())
   .then(json=>{
-    document.getElementById("asteroidDesc").innerHTML = json.near_earth_objects[day][asteroid].estimated_diameter.kilometers.estimated_diameter_max;
+    if (normalRatio){
+      document.getElementById("asteroidDesc").innerHTML += "Diagram on left displays the Asteroid in relation <br> to the size of a Football Field." + "<br><br><span style=' font-weight: bold;'>Asteroid Name: </span>" + json.near_earth_objects[day][asteroid].name + " <br><br> <span style=' font-weight: bold;'>Max Estimate Diameter: </span>" + json.near_earth_objects[day][asteroid].estimated_diameter.kilometers.estimated_diameter_max + "KM"+ "<br><br><span style=' font-weight: bold;'>Field Dimensions:</span> 120m x 75m <br><br>   <span style=' font-weight: bold;'>Graph to Asteroid Scale: </span> 4000 : 1.08";
+    } else{
+      var newRatio = 4000*weirdRatio
+      document.getElementById("asteroidDesc").innerHTML += "Diagram on left displays the Asteroid in relation <br> to the size of a Football Field." + "<br><br><span style=' font-weight: bold;'>Asteroid Name: </span>" + json.near_earth_objects[day][asteroid].name + " <br><br> <span style=' font-weight: bold;'>Max Estimate Diameter: </span>" + json.near_earth_objects[day][asteroid].estimated_diameter.kilometers.estimated_diameter_max + "KM"+ "<br><br><span style=' font-weight: bold;'>Field Dimensions:</span> 120m x 75m <br><br>  <span style=' font-weight: bold;'>Graph to Asteroid Scale: </span>" + newRatio + ": 1.08";
+    }
   })
 }
 
@@ -254,6 +310,7 @@ function openModal(){
 
 span.onclick = function() {
   modal.style.display = "none";
+  document.getElementById("asteroidDesc").innerHTML = "";
   const canvas = document.getElementById('myCanvas');
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -262,6 +319,7 @@ span.onclick = function() {
 window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display = "none";
+    document.getElementById("asteroidDesc").innerHTML = "";
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);

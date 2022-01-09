@@ -13,12 +13,14 @@
 }
 
 #asteroidDesc{
+  margin-top: 2%;
   float: right;
-  margin-right: 20%;
+  margin-right: 5%;
+  text-align: center;
 }
 
 #myCanvas{
-  margin-left: 8%;
+  margin-left: 5%;
 }
 
 #logo{
