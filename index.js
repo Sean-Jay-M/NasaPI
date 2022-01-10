@@ -167,10 +167,9 @@ function neows(dateList){
             var identification = json.near_earth_objects[day][x-1].id;
             var danger = json.near_earth_objects[day][x-1].is_potentially_hazardous_asteroid;
             var sentry = json.near_earth_objects[day][x-1].is_sentry_object;
-            var dataset = json;
             var xminus= x-1
             var dayString = '"' + day + '"';
-            document.getElementById(day).innerHTML += "<td><button type='button' class='Astbutton' onclick='neowsGraph(" + identification + "," + dayString + "); neowsDescription(" + dayString +  "," + xminus + "); openModal()'>Open</button></td><td>" + identification + "</td><td>" + absoluteMag + "</td><td>" + danger + "</td><td>" + sentry + "</td>";
+            document.getElementById(day).innerHTML += "<td><button type='button' class='Astbutton' onclick='neowsGraph(" + identification + "," + dayString + "); neowsDescription(" + dayString +  "," + xminus + ");" + "neowsPlot(" + dayString + "," + identification + ");  openModal()'>Open</button></td><td>" + identification + "</td><td>" + absoluteMag + "</td><td>" + danger + "</td><td>" + sentry + "</td>";
             document.getElementById(day).innerHTML += "</tr>";
           }
         }
@@ -191,8 +190,8 @@ var asteroidListMain = {};
 var normalRatio = true;
 var weirdRatio = 0;
 
-//We're dealing in meters here. Where 1 pixel = 1 meter. The ratio between M displayed on the graph to real meter is technically 1px (or 1 meter) = 0.0002645833m
-// For ease of use I used the width of the box field to define the ratio between displayed and real 4000px (or 4 thousand meters) = 1.06m it's also just easier to understand what the user is looking at.
+//We're dealing in meters here. Where 1 pixel represents 1 meter. The ratio between M displayed on the graph to real meter is technically 1px (or 1 meter) = 0.0002645833m (real meter)
+// For ease of use I used the width of the box field to define the ratio between displayed and real: 4000px (or 4 thousand meters) = 1.06m (real meters) it's also just easier to understand what the user is looking at.
 // In essence what this graph displays is rough 4000 times smaller than the real object it is representing/distance it is to display.. 
 function neowsGraph(identification, day){
   var c = document.getElementById("myCanvas");
@@ -275,6 +274,7 @@ function neowsGraph(identification, day){
 }
 
 function neowsDescription(day, asteroid){
+  document.getElementById("asteroidDesc").innerHTML = 'Loading Data...';
   var dates = dateList;
   var today = dates[dates.length - 1];
   var pWeek = dates[dates.length - 7];
@@ -283,21 +283,146 @@ function neowsDescription(day, asteroid){
   .then(response=>response.json())
   .then(json=>{
     if (normalRatio){
-      document.getElementById("asteroidDesc").innerHTML += "Diagram on left displays the Asteroid in relation <br> to the size of a Football Field." + "<br><br><span style=' font-weight: bold;'>Asteroid Name: </span>" + json.near_earth_objects[day][asteroid].name + " <br><br> <span style=' font-weight: bold;'>Max Estimate Diameter: </span>" + json.near_earth_objects[day][asteroid].estimated_diameter.kilometers.estimated_diameter_max + "KM"+ "<br><br><span style=' font-weight: bold;'>Field Dimensions:</span> 120m x 75m <br><br>   <span style=' font-weight: bold;'>Graph to Asteroid Scale: </span> 4000 : 1.08";
+      document.getElementById("asteroidDesc").innerHTML = '';
+      document.getElementById("asteroidDesc").innerHTML += "Diagram on left displays the Asteroid in relation <br> to the size of a Football Field." + "<br><br><span style=' font-weight: bold;'>Asteroid Name: </span>" + json.near_earth_objects[day][asteroid].name + " <br><br> <span style=' font-weight: bold;'>Max Estimate Diameter: </span>" + json.near_earth_objects[day][asteroid].estimated_diameter.kilometers.estimated_diameter_max + "KM"+ "<br><br><span style=' font-weight: bold;'>Field Dimensions:</span> 120m x 75m <br><br>   <span style=' font-weight: bold;'>Graph to Asteroid Scale: </span> 3779 : 1.00";
     } else{
-      var newRatio = 4000*weirdRatio
-      document.getElementById("asteroidDesc").innerHTML += "Diagram on left displays the Asteroid in relation <br> to the size of a Football Field." + "<br><br><span style=' font-weight: bold;'>Asteroid Name: </span>" + json.near_earth_objects[day][asteroid].name + " <br><br> <span style=' font-weight: bold;'>Max Estimate Diameter: </span>" + json.near_earth_objects[day][asteroid].estimated_diameter.kilometers.estimated_diameter_max + "KM"+ "<br><br><span style=' font-weight: bold;'>Field Dimensions:</span> 120m x 75m <br><br>  <span style=' font-weight: bold;'>Graph to Asteroid Scale: </span>" + newRatio + ": 1.08";
+      document.getElementById("asteroidDesc").innerHTML = '';
+      var newRatio = 3779*weirdRatio
+      document.getElementById("asteroidDesc").innerHTML += "Diagram on left displays the Asteroid in relation <br> to the size of a Football Field." + "<br><br><span style=' font-weight: bold;'>Asteroid Name: </span>" + json.near_earth_objects[day][asteroid].name + " <br><br> <span style=' font-weight: bold;'>Max Estimate Diameter: </span>" + json.near_earth_objects[day][asteroid].estimated_diameter.kilometers.estimated_diameter_max + "KM"+ "<br><br><span style=' font-weight: bold;'>Field Dimensions:</span> 120m x 75m <br><br>  <span style=' font-weight: bold;'>Graph to Asteroid Scale: </span>" + newRatio + ": 1.00";
     }
   })
 }
 
+var asteroidListMain2= {};
+var asteroidListMain3= {};
+
+function neowsPlot(day, identification){
+  //the trouble with this plot is visualizing the distances and trying to keep it somewhat in proportion despite being a 500px wide by 1000px height canvas displaying an inconceivable distance.
+  //500 px will represent 0.75 astronomical unit, the width of the canvas is 0.75 units. While the height is 1 units. In effect 1px = 0.00133AU
+  //for reference one astronomical unit to kilometer ratio is 1:149597870700
+  //The sun is officially 1 astronomical units in distance from the earth, this will be used as the basis for visualizing the distance 
+  //This ratio will allow for me to display the sun as the reference point. While the earth and sun will NOT be to scale the distance between them will be (mostly)
+  // It is from the CENTER of the sun and CENTER of the earth, therefore the edges need not be proportonally correct, just the distances from the cores.
+  var c = document.getElementById("myCanvas2");
+  var ctx2 = c.getContext("2d");
+  var miss_distance = (asteroidListMain2[day][identification]);
+  var holding = 0;
+  //scaling issues once again, 0.018 is just a happy coincidence for a nice distance for the graph to operate at.
+  if (miss_distance >= 0.018){
+  var calculationMiss = miss_distance/0.0013
+  ctx2.beginPath();
+  ctx2.arc(250, 750, 5, 0, 2 * Math.PI);
+  ctx2.stroke();
+  ctx2.beginPath();
+  ctx2.arc(250, 0, 20, 0, 2 * Math.PI);
+  ctx2.stroke();
+  ctx2.beginPath();
+  ctx2.moveTo(0, 0);
+  ctx2.lineTo(0, 750);
+  ctx2.lineWidth = 2;
+  ctx2.stroke();
+  ctx2.beginPath();
+  ctx2.moveTo(0, 750);
+  ctx2.lineTo(500, 750);
+  ctx2.lineWidth = 2;
+  ctx2.stroke();
+  ctx2.font = "10px Arial";
+  ctx2.fillText("EARTH", 260, 740);
+  ctx2.font = "10px Arial";
+  ctx2.fillText("SUN (SOL)", 275, 10);
+  ctx2.font = "10px Arial";
+  ctx2.fillText("1.00AU", 3, 10);
+  ctx2.font = "10px Arial";
+  ctx2.fillText("0.00AU", 3, 745);
+  ctx2.font = "10px Arial";
+  ctx2.fillText("0.75AU", 3, 250);
+  ctx2.font = "10px Arial";
+  ctx2.fillText("0.75AU", 465, 745);
+  ctx2.beginPath();
+  ctx2.arc(250, (750 - calculationMiss), 2, 0, 2 * Math.PI);
+  ctx2.font = "10px Arial";
+  ctx2.fillText("Miss Distance: " + miss_distance + "AU", 90, (750 - calculationMiss));
+  ctx2.stroke();
+  neowsPlotDesc(true, day, identification, holding);
+  } else {
+    var doCalculate = true;
+    var calculationNum = 1
+    while(doCalculate){
+      var missTwo = miss_distance * calculationNum;
+      if (missTwo >= 0.018){
+        var calculationMiss2 = missTwo/0.0013
+        ctx2.beginPath();
+        ctx2.arc(250, 750, 5, 0, 2 * Math.PI);
+        ctx2.stroke();
+        ctx2.beginPath();
+        ctx2.stroke();
+        ctx2.beginPath();
+        ctx2.moveTo(0, 0);
+        ctx2.lineTo(0, 750);
+        ctx2.lineWidth = 2;
+        ctx2.stroke();
+        ctx2.beginPath();
+        ctx2.moveTo(0, 750);
+        ctx2.lineTo(500, 750);
+        ctx2.lineWidth = 2;
+        ctx2.stroke();
+        ctx2.font = "10px Arial";
+        ctx2.fillText("EARTH", 260, 740);
+        ctx2.font = "10px Arial";
+        ctx2.fillText((1.00 / calculationNum) + "AU", 3, 10);
+        ctx2.font = "10px Arial";
+        ctx2.fillText("0.00AU", 3, 745);
+        ctx2.font = "10px Arial";
+        ctx2.fillText((0.75 / calculationNum) + "AU", 3, 250);
+        ctx2.font = "10px Arial";
+        ctx2.fillText((0.75 / calculationNum) + "AU", 465, 745);
+        ctx2.beginPath();
+        ctx2.arc(250, (750 - calculationMiss2), 2, 0, 2 * Math.PI);
+        ctx2.font = "10px Arial";
+        ctx2.fillText("Miss Distance: " + miss_distance + "AU", 90, (750 - calculationMiss2));
+        ctx2.stroke();
+        neowsPlotDesc(false, day, identification, calculationNum);
+        doCalculate = false;
+      }
+      calculationNum += 1
+    }
+  }
+}
+
+function neowsPlotDesc(normal, day, identification, calculationNum){
+  if(normal){
+    document.getElementById("asteroidPlotDesc").innerHTML = '';
+    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 6.6846e-12";
+  }else {
+    if (calculationNum == 2){
+      document.getElementById("asteroidPlotDesc").innerHTML = '';
+      document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 3.3423e-12";
+  }else if(calculationNum == 3){
+    document.getElementById("asteroidPlotDesc").innerHTML = '';
+    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 2.20591e-12";
+  }else if(calculationNum == 4){
+    document.getElementById("asteroidPlotDesc").innerHTML = '';
+    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 1.67115e-12";
+  }else{
+    document.getElementById("asteroidPlotDesc").innerHTML = '';
+    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH";
+  }
+}
+}
+
 function neowsData(json, day){
-  var asteroidList = {}
+  var asteroidList = {};
+  var asteroidList2 ={};
+  var asteroidList3 ={};
   for(var x = json.near_earth_objects[day].length; x > 0; x--){
     var asteroid = x-1;
     asteroidList[json.near_earth_objects[day][asteroid].id] = json.near_earth_objects[day][asteroid].estimated_diameter.kilometers.estimated_diameter_max;
+    asteroidList2[json.near_earth_objects[day][asteroid].id] = json.near_earth_objects[day][asteroid].close_approach_data[0].miss_distance.astronomical;
+    asteroidList3[json.near_earth_objects[day][asteroid].id] = json.near_earth_objects[day][asteroid].close_approach_data[0].relative_velocity.kilometers_per_hour;
   }
   asteroidListMain[day] = asteroidList;
+  asteroidListMain2[day] = asteroidList2;
+  asteroidListMain3[day] = asteroidList3;
 }
 
 //opens & closes the modal for NEOWS
@@ -323,5 +448,9 @@ window.onclick = function(event) {
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const canvas2 = document.getElementById('myCanvas2');
+    const ctx2 = canvas2.getContext('2d');
+    ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
   }
 }
+

@@ -19,7 +19,18 @@
   text-align: center;
 }
 
+#asteroidPlotDesc{
+  margin-top: 25%;
+  float: right;
+  margin-right: 5%;
+  text-align: center;
+}
+
 #myCanvas{
+  margin-left: 5%;
+}
+
+#myCanvas2{
   margin-left: 5%;
 }
 
