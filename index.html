@@ -11,6 +11,10 @@
     <img src="images/nasapi.png" id="logo">
 </div>
 <div id="main">
+    <button type="button" class="collapsible">InSight: Mars Weather Service</button>
+    <div class="content">
+        <p class="paragraphs" id="apoddesc">NASA's InSight Mars lander collects continuous measurements with regards to Weather on the surface of Mars at Elysium Planitia, near Mars' equator.</p>
+    </div>
     <div id="myModal" class="modal">
         <div class="modal-content">
         <span class="close"></span>
@@ -24,21 +28,33 @@
         </div>
         </div>
   </div>
-    <button type="button" class="collapsible NEOWSC" id="NEOWS">Near Earth Object Web Service</button>
+    <button type="button" class="collapsible NEOWSC" id="NEOWS">Near Earth Object Web Service (NEOWS)</button>
     <div class="content">
         <p class="paragraphs" id="NEOWSP">The Near Earth Object Web Service or N.E.O.W.S provides deep data pertaining to Asteroids which come into close proximity to Earth. The API is maintained by the SpaceRocks Team.</p>
         <div id="tables"></div>
         <p class="paragraphs"></p>
         <p class="paragraphs"></p>
-    </div>     
-    <button type="button" class="collapsible" id="APOD">Astronomy Picture Of The Day</button>
+    </div>
+    <button type="button" class="collapsible">Solar System Dynamics and Center for Near-Earth Object Studies</button>
     <div class="content">
-        <div id="image" id="apod"></div>
+        <p class="paragraphs" id="apoddesc">Data relating to: Comet Close Approaches, Fireballs, Mission Design, NHATS, Scout and Sentry.</p>
+    </div> 
+    <button type="button" class="collapsible">Exoplanet</button>
+    <div class="content">
+        <p class="paragraphs" id="apoddesc">NASA provides free and open access to its Exoplanet Archive, a collection of planets outside our Solar System.</p>
+    </div>
+    <button type="button" class="collapsible" id="APOD">Astronomy Picture Of The Day (APOD)</button>
+    <div class="content">
+        <div id="image"></div>
         <select id="selectNumber" onchange="newphoto(this);";></select>
         <p class="paragraphs" id="title"></p>
         <p class="paragraphs" id="error"></p>
         <p class="paragraphs" id="description"></p>
         <p class="paragraphs" id="apoddesc">NASA runs Astronomy Picture Of Day, which is exqactly as the name describes: an Astronomy Photo each day since June 16 1995.</p>
+    </div>
+    <button type="button" class="collapsible">Mars Rover Photos</button>
+    <div class="content">
+        <p class="paragraphs" id="apoddesc">A Collection of Photos from the various Rovers which served on Mars.</p>
     </div> 
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>

@@ -6,12 +6,22 @@ function fetchData(){
       fetch('https://api.nasa.gov/planetary/apod?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ')
       .then(response=>response.json())
       .then(json=>{
-        console.log(json)
+        console.log(json);
+        var display = json.url;
         var title = json.title;
         var description = json.explanation;
-        document.getElementById("image").innerHTML += "<img src='" + json.url + "' id='day_img'>";
+        document.getElementById("error").innerHTML = "";
+        document.getElementById("image").innerHTML = "<img src='" + display + "' id='day_img'>";
         document.getElementById("title").innerHTML = title;
         document.getElementById("description").innerHTML = description;
+        var displaystring = String(display);
+        console.log(displaystring);
+        // this is to deal with CORB issues, in this API it is fairly clear most issues are caused by linking to youtube
+        if(displaystring.includes("youtube")){
+          console.log("Will cause CROB");
+          document.getElementById("image").innerHTML = "<iframe width='560' height='315' id='CORBV' src=" + display + "title='YouTube video player' style='border: 0; display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 20px;' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+          document.getElementById("error").innerHTML = "<br> This is not an image, but a video ! Enjoy :)";
+        }
       })
     }catch(error){
       console.log(error)
@@ -83,14 +93,14 @@ function newphoto(date){
       // this is to deal with CORB issues, in this API it is fairly clear most issues are caused by linking to youtube
       if(displaystring.includes("youtube")){
         console.log("Will cause CROB");
-        document.getElementById("image").innerHTML = "<img src='images/visualdon.gif' id='day_img'>";
-        document.getElementById("error").innerHTML = "<br> THIS IMAGE IS NOT ACCESSIBLE DUE TO CORB. But you can still read the details :)"
+        document.getElementById("image").innerHTML = "<iframe width='560' height='315' id='CORBV' src=" + display + "title='YouTube video player' style='border: 0; display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 20px;' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+        document.getElementById("error").innerHTML = "<br> This is not an image, but a video ! Enjoy :)";
       }
-      loading(1500, "APOD", 'Astronomy Picture Of The Day')
+      loading(1500, "APOD", 'Astronomy Picture Of The Day (APOD)')
     })
   }catch(error){
     document.getElementById("image").innerHTML = "<img src='images/visualdon.gif' id='day_img'>"
-    loading(1500, "APOD", 'Astronomy Picture Of The Day')
+    loading(1500, "APOD", 'Astronomy Picture Of The Day (APOD)')
     console.log(error)
   }
 }
@@ -104,7 +114,7 @@ function loadingblock(){
 }
 
 function loadingOpen2(){
-  document.getElementById("NEOWS").innerHTML = "Near Earth Object Web Service";
+  document.getElementById("NEOWS").innerHTML = "Near Earth Object Web Service (NEOWS)";
   block = false;
 }
 
@@ -204,7 +214,7 @@ function neowsGraph(identification, day){
     normalRatio = true;
     var fieldWidth1 = 75;
     var fieldHeight1 = 120;
-    var xPos1 = (document.getElementById("myCanvas").width/2) - (fieldWidth1/2);
+    var xPos1 = 400 //(document.getElementById("myCanvas").width/2) - (fieldWidth/2);
     var yPos1 = (document.getElementById("myCanvas").height/2) - (fieldHeight1/2);
     ctx.beginPath();
     ctx.arc(250, 125, (value/2), 0, 2 * Math.PI);
@@ -241,7 +251,7 @@ function neowsGraph(identification, day){
       if(finalRadius <= 122.5){
         var fieldWidth = 75 / calculation;
         var fieldHeight = 120 / calculation;
-        var xPos = (document.getElementById("myCanvas").width/2) - (fieldWidth/2);
+        var xPos = 400 //(document.getElementById("myCanvas").width/2) - (fieldWidth/2);
         var yPos = (document.getElementById("myCanvas").height/2) - (fieldHeight/2);
         ctx.beginPath();
         ctx.arc(250, 125, (finalRadius), 0, 2 * Math.PI);
@@ -296,9 +306,11 @@ function neowsDescription(day, asteroid){
 var asteroidListMain2= {};
 var asteroidListMain3= {};
 
+
+//the ratio of graph to distance in AU needs to be looked at and resolved. I believe my thought process may be incorrect.
 function neowsPlot(day, identification){
   //the trouble with this plot is visualizing the distances and trying to keep it somewhat in proportion despite being a 500px wide by 1000px height canvas displaying an inconceivable distance.
-  //500 px will represent 0.75 astronomical unit, the width of the canvas is 0.75 units. While the height is 1 units. In effect 1px = 0.00133AU
+  //500 px will represent 0.66 astronomical unit, the width of the canvas is 0.66 units. While the height is 1 units. In effect 1px = 0.00133AU
   //for reference one astronomical unit to kilometer ratio is 1:149597870700
   //The sun is officially 1 astronomical units in distance from the earth, this will be used as the basis for visualizing the distance 
   //This ratio will allow for me to display the sun as the reference point. While the earth and sun will NOT be to scale the distance between them will be (mostly)
@@ -335,9 +347,9 @@ function neowsPlot(day, identification){
   ctx2.font = "10px Arial";
   ctx2.fillText("0.00AU", 3, 745);
   ctx2.font = "10px Arial";
-  ctx2.fillText("0.75AU", 3, 250);
+  ctx2.fillText("0.66AU", 3, 250);
   ctx2.font = "10px Arial";
-  ctx2.fillText("0.75AU", 465, 745);
+  ctx2.fillText("0.66AU", 465, 745);
   ctx2.beginPath();
   ctx2.arc(250, (750 - calculationMiss), 2, 0, 2 * Math.PI);
   ctx2.font = "10px Arial";
@@ -373,9 +385,9 @@ function neowsPlot(day, identification){
         ctx2.font = "10px Arial";
         ctx2.fillText("0.00AU", 3, 745);
         ctx2.font = "10px Arial";
-        ctx2.fillText((0.75 / calculationNum) + "AU", 3, 250);
+        ctx2.fillText((0.66 / calculationNum) + "AU", 3, 250);
         ctx2.font = "10px Arial";
-        ctx2.fillText((0.75 / calculationNum) + "AU", 465, 745);
+        ctx2.fillText((0.66 / calculationNum) + "AU", 465, 745);
         ctx2.beginPath();
         ctx2.arc(250, (750 - calculationMiss2), 2, 0, 2 * Math.PI);
         ctx2.font = "10px Arial";
@@ -392,20 +404,20 @@ function neowsPlot(day, identification){
 function neowsPlotDesc(normal, day, identification, calculationNum){
   if(normal){
     document.getElementById("asteroidPlotDesc").innerHTML = '';
-    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 6.6846e-12";
+    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> 1AU is also the distance between Earth and the Sun. <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 6.6846e-12";
   }else {
     if (calculationNum == 2){
       document.getElementById("asteroidPlotDesc").innerHTML = '';
-      document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 3.3423e-12";
+      document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> 1AU is also the distance between Earth and the Sun. <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 3.3423e-12";
   }else if(calculationNum == 3){
     document.getElementById("asteroidPlotDesc").innerHTML = '';
-    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 2.20591e-12";
+    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> 1AU is also the distance between Earth and the Sun. <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 2.20591e-12";
   }else if(calculationNum == 4){
     document.getElementById("asteroidPlotDesc").innerHTML = '';
-    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 1.67115e-12";
+    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> 1AU is also the distance between Earth and the Sun. <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH" + "<br><br><span style=' font-weight: bold;'>Graph to distance(AU) Ratio: </span> 3779 : 1.67115e-12";
   }else{
     document.getElementById("asteroidPlotDesc").innerHTML = '';
-    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH";
+    document.getElementById("asteroidPlotDesc").innerHTML += 'Diagram on the left displays the distance between <br> the Asteroid and Earth in Astronomical Units. <br> 1AU = 149597870700KM <br> 1AU is also the distance between Earth and the Sun. <br> The Earth, Sun and Asteroid are not to scale <br> but their distances are. <br><br>' + "<span style=' font-weight: bold;'>Miss Distance: </span>" + asteroidListMain2[day][identification] + "AU<br><br><span style=' font-weight: bold;'>Relative Seed: </span>" + asteroidListMain3[day][identification] + "KMPH";
   }
 }
 }
