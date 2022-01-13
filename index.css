@@ -34,6 +34,22 @@
   margin-left: 5%;
 }
 
+#myCanvas3{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1%;
+  margin-top: 1.5%;
+}
+
+#InSightLine1, #InSightLine2{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 34%;
+  text-align: center;
+}
+
 #logo{
   pointer-events: none;
   cursor: default;
@@ -65,12 +81,19 @@
   margin-right: auto;
 }
 
-
-#apoddesc, #NEOWSP{
+#apoddesc, #NEOWSP, #InSightDesc, #TempInfo{
   text-align: center;
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+#ErrorMsg {
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: bold;
 }
 
 .paragraphs{
@@ -99,7 +122,7 @@
   background-color: #e6e6e6;
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.2s ease-out;
+  transition: max-height 0.4s ease-out;
 }
 
 .collapsible:after {
@@ -183,7 +206,6 @@
   color: white;
 }
 
-
 /* Modal */
 /* The Modal (background) */
 .modal {
@@ -224,13 +246,11 @@
   cursor: pointer;
 }
 
-
 a:link {
   font-weight: bold;
   color: black;
   text-decoration: none;
 }
-
 
 a:visited {
   font-weight: bold;
@@ -238,12 +258,10 @@ a:visited {
   text-decoration: none;
 }
 
-
 a:hover {
   font-weight: bold;
   text-decoration: line-through;
 }
-
 
 a:active {
   font-weight: bold;

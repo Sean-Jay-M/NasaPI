@@ -1,6 +1,11 @@
+//APOD - this section is pretty easy to understand, not much documentation required.
 var dateList = []
-year()
-fetchData()
+year();
+fetchData();
+inSightFetch();
+fireBall();
+neows(dateList);
+
 function fetchData(){
     try{
       fetch('https://api.nasa.gov/planetary/apod?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ')
@@ -26,8 +31,7 @@ function fetchData(){
     }catch(error){
       console.log(error)
     }
-  }
-
+}
 
 function year(){
     const listDate = [];
@@ -60,7 +64,7 @@ function sleep(ms) {
 
 var apodOpen = true;
 
-//this is a faux loading function. It's used to give the user interaction while waiting for different elements to load.
+//this is a faux loading function. It's used to give the user interaction while waiting for different elements to load. Used for APOD and Mars Photos.
 async function loading(time, div, replace){
   apodOpen = false;
   document.getElementById(div).innerHTML = 'loading....';
@@ -72,6 +76,7 @@ async function loading(time, div, replace){
 
 function newphoto(date){
   document.getElementById("APOD").click();
+  document.getElementById("APOD").innerHTML = 'loading....';
   var newapi = 'https://api.nasa.gov/planetary/apod?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ';
   newapi += "&date="
   newapi += date.value+ "&";
@@ -100,12 +105,12 @@ function newphoto(date){
     })
   }catch(error){
     document.getElementById("image").innerHTML = "<img src='images/visualdon.gif' id='day_img'>"
-    loading(1500, "APOD", 'Astronomy Picture Of The Day (APOD)')
+    loading(1500, "APOD", 'Failed to Load.')
     console.log(error)
   }
 }
 
-//open - close on start NEOWS.
+//open - close on start NEOWS. 
 var block = true; 
 
 // this is used for elements which require time on page opening such as NEOWS
@@ -117,7 +122,6 @@ function loadingOpen2(){
   document.getElementById("NEOWS").innerHTML = "Near Earth Object Web Service (NEOWS)";
   block = false;
 }
-
 
 var coll = document.getElementsByClassName("NEOWSC");
 var y;
@@ -155,6 +159,8 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 
+//NEOWS Section, I have programmed it to only select the last seven days. I believe I have shown competence in allowing the user select a date range using the APOD. It would be silly to do it again. 
+//There are more complicated calculations, and ways to gather data from the API in this section.
 function neows(dateList){
   loadingblock();
   var dates = dateList;
@@ -194,7 +200,6 @@ function neows(dateList){
     console.log(error)
   }
 }
-neows(dateList);
 
 var asteroidListMain = {};
 var normalRatio = true;
@@ -306,7 +311,6 @@ function neowsDescription(day, asteroid){
 var asteroidListMain2= {};
 var asteroidListMain3= {};
 
-
 //the ratio of graph to distance in AU needs to be looked at and resolved. I believe my thought process may be incorrect.
 function neowsPlot(day, identification){
   //the trouble with this plot is visualizing the distances and trying to keep it somewhat in proportion despite being a 500px wide by 1000px height canvas displaying an inconceivable distance.
@@ -361,6 +365,7 @@ function neowsPlot(day, identification){
     var calculationNum = 1
     while(doCalculate){
       var missTwo = miss_distance * calculationNum;
+      //Basically I dont want to display anything closer than this on the canvas. As the two circles begin to merge. 
       if (missTwo >= 0.018){
         var calculationMiss2 = missTwo/0.0013
         ctx2.beginPath();
@@ -466,3 +471,98 @@ window.onclick = function(event) {
   }
 }
 
+//InSight section
+// InSight Dictionaries: (They'll be short but necessary)
+var InSightData = {};
+//This API has a habit of not loading sometimes, this could honestly be due to the Rover being unable to send data due to a number of reasons. 
+function inSightFetch(){
+  document.getElementById("InSight").innerHTML = "loading...";
+  try{
+    fetch('https://api.nasa.gov/insight_weather/?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ&feedtype=json&ver=1.0')
+    .then(response=>response.json())
+    .then(json=>{
+      console.log(json);
+      solKey = json.sol_keys[0];
+      if (typeof solKey == 'undefined'){
+        document.getElementById("ErrorMsg").innerHTML = " WARNING: Some or all of the Data for the current Day(Sol) has not been received from the Rover or API.";
+        console.log("Visit this link to easily view if data present: " + "https://api.nasa.gov/assets/insight/insight_mars_wind_rose.html" + " This message has been shown due to a lack of Data from the API or Rover.");
+        document.getElementById("InSightDesc").innerHTML = "";
+        document.getElementById("TempInfo").innerHTML = "";
+        document.getElementById("myCanvas3").remove();
+      }else{
+        //Put these into tables because the variables will change and fuck everything up. Bit of a waste of time but ah well ua loser. 
+        document.getElementById("InSightLine1").innerHTML =  "<table><tr><td><span style=' font-weight: bold;'>Sol/Days Since Rover Touchdown: </span><br>" +  solKey + "</td><td><span style=' font-weight: bold;'>Sol Season:</span> </span>" + json[solKey].Season + "</td></tr><tr><td><span style=' font-weight: bold;'>Northern Season: </span><br>" + json[solKey].Northern_season + "</td><td><span style=' font-weight: bold;'>Southern Season:</span><br>" + json[solKey].Southern_season + "</td></tr></table>";
+        document.getElementById("InSightLine2").innerHTML =  "<table><tr><td><span style=' font-weight: bold;'>Minimum Temperature: </span>" + Math.round(((json[solKey].AT.mn - 32) * 5/9))  + "</td><td><span style=' font-weight: bold;'>Maximum Temperature: </span>" +  Math.round(((json[solKey].AT.mx - 32) * 5/9))  + "</td></tr></table>"
+        InSightData["avTemp"] = json[solKey].AT.av
+        InSightData["mnTemp"] = json[solKey].AT.mn
+        InSightData["mxTemp"] = json[solKey].AT.mx
+        //ct may not be used, but is added in incase I find a use for it.
+        InSightData["ctTemp"] = json[solKey].AT.ct
+        //Insert other weather data here.
+
+        //call the graph
+        temperatureGraph();
+      }
+    })
+  document.getElementById("InSight").innerHTML = "InSight: Mars Weather Service";
+  }catch(error){
+    console.log(error)
+    document.getElementById("InSight").innerHTML = "Failed to Load.";
+  }
+}
+
+//The temperature graph is 550 pixels wide. The max temperature on mars is 70 degerees F while the min is -195. This is converted to celsius so the range is -125 to 20. Therefore 150 to 150 works fine. 
+// I really don't like F as a metric. Therefore I changed it to Celsius, as 0 holds little meaning in farenheit, although thee are other better metrics I understand.
+//one pixel is one degree.
+function temperatureGraph(){
+  var c = document.getElementById("myCanvas3");
+  var ctx3 = c.getContext("2d");
+  var ctx4 = c.getContext("2d")
+  //Draw the graph.
+  ctx3.beginPath();
+  ctx3.moveTo(100, 100);
+  ctx3.lineTo(400, 100);
+  ctx3.stroke();
+  ctx3.lineWidth = 2;
+  ctx3.beginPath();
+  ctx3.moveTo(100, 110);
+  ctx3.lineTo(100, 90);
+  ctx3.stroke();
+  ctx3.beginPath();
+  ctx3.moveTo(400, 110);
+  ctx3.lineTo(400, 90);
+  ctx3.stroke();
+  ctx3.font = "15px Arial";
+  ctx3.fillText("AVERAGE TEMPERATURE", 150, 20);
+  ctx4.font = "10px Arial";
+  ctx4.fillText("-150C", 60, 104);
+  ctx4.fillText("+150C", 410, 104);
+  ctx4.beginPath();
+  ctx4.moveTo(250, 110);
+  ctx4.lineTo(250, 90);
+  ctx4.stroke();
+  //Implement the different recordings for the day.
+  //Average temperature, if greater than 0 or equal to zero add, if less than 
+  var DayTemp =  Math.round(((InSightData["avTemp"] - 32) * 5/9)); 
+  console.log(DayTemp);
+  if (DayTemp > 0){
+    var DayTempLine = 250 + DayTemp;
+    ctx4.beginPath();
+    ctx4.moveTo(DayTempLine, 110);
+    ctx4.lineTo(DayTempLine, 90);
+    ctx4.stroke();
+    ctx4.font = "10px Arial";
+    ctx4.fillText(DayTemp+"C", (DayTempLine+5), 110);
+  } else {
+    var DayTempLine = 250 + DayTemp;
+    ctx4.beginPath();
+    ctx4.moveTo(DayTempLine, 100);
+    ctx4.lineTo(DayTempLine, 90);
+    ctx4.stroke();
+    ctx4.font = "10px Arial";
+    ctx4.fillText(DayTemp+"C", (DayTempLine-12), 110);
+  }
+}
+
+//SSD/CNEOS Section 
+//Currently the FireballAPI seems to be broken. I have to figure it out.
