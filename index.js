@@ -3,7 +3,7 @@ var dateList = []
 year();
 fetchData();
 inSightFetch();
-fireBall();
+fireball();
 neows(dateList);
 
 function fetchData(){
@@ -484,11 +484,12 @@ function inSightFetch(){
       console.log(json);
       solKey = json.sol_keys[0];
       if (typeof solKey == 'undefined'){
-        document.getElementById("ErrorMsg").innerHTML = " WARNING: Some or all of the Data for the current Day(Sol) has not been received from the Rover or API.";
+        document.getElementById("ErrorMsg").innerHTML = " WARNING: Some or all of the Data for the current Day(Sol) has not been received from the Rover or API. Possibly due to intense weather conditions on Mars.";
         console.log("Visit this link to easily view if data present: " + "https://api.nasa.gov/assets/insight/insight_mars_wind_rose.html" + " This message has been shown due to a lack of Data from the API or Rover.");
         document.getElementById("InSightDesc").innerHTML = "";
         document.getElementById("TempInfo").innerHTML = "";
         document.getElementById("myCanvas3").remove();
+        document.getElementById("InSight").innerHTML = "Failed to Load. Click for more info.";
       }else{
         //Put these into tables because the variables will change and fuck everything up. Bit of a waste of time but ah well ua loser. 
         document.getElementById("InSightLine1").innerHTML =  "<table><tr><td><span style=' font-weight: bold;'>Sol/Days Since Rover Touchdown: </span><br>" +  solKey + "</td><td><span style=' font-weight: bold;'>Sol Season:</span> </span>" + json[solKey].Season + "</td></tr><tr><td><span style=' font-weight: bold;'>Northern Season: </span><br>" + json[solKey].Northern_season + "</td><td><span style=' font-weight: bold;'>Southern Season:</span><br>" + json[solKey].Southern_season + "</td></tr></table>";
@@ -565,4 +566,168 @@ function temperatureGraph(){
 }
 
 //SSD/CNEOS Section 
-//Currently the FireballAPI seems to be broken. I have to figure it out.
+//Fireball
+
+const fireballs = {};
+
+function fireball(){
+  document.getElementById("SSD").innerHTML = "loading...";
+  try{
+    fetch('https://ssd-api.jpl.nasa.gov/fireball.api?limit=20')
+    .then(response=>response.json())
+    .then(json=>{
+      console.log(json);
+      for(var i = json.data.length - 1; i > -1; i--){
+        fireballs[i] = json.data[i];
+      }
+      fireballsDraw();
+    })
+    document.getElementById("SSD").innerHTML = "Solar System Dynamics and Center for Near-Earth Object Studies";
+  }catch(error){
+    console.log(error)
+    document.getElementById("SSD").innerHTML = "Failed to Load.";
+  }
+}
+
+//Prep for the map development.
+//Latitudes Range from -90 to 90. They are horizontal. 0 is the equator, fairly easy unlike Longitudes. 
+//Longitudes range from -180 to 180. 0 Longitude goes right through Greenwhich England.
+//I cannot afford any of the mapping library options online, and therefore I will not purchase any
+//that -90 to 90 is 180. -180 to 80 is 260. Otherwise known as 90n and 90s and 180w and 180e
+//The map I have chosen has the mercator projection and has the dimensions of 1024 x 550. This unfortunately is a bit not great ! 
+// 550/180 = 3.06 . So roughly speaking every 3 verticle pixels is a new latitude. 
+// 1024/360 = 2.84. Therefore for every 3 horizontal pixels we have a new longitude. 
+//I understand that simply projecting a globe onto a flat surface is not exactly easy, and then adapting the coordinates isn't easy either. I understand this is somewhat crude but I am trusting these are close to precision. With a 80% precision.
+//The map I chose also doesnt have the antarctic lol and definitely isn't the most accurate but listen we're going for something somewhat close. 
+// 0 longitude is 478px. 0 latitude is 308.
+//This has been tested, you can view the position in the phot0 files of Fireball1 to the official nasa map.
+//Impact energy colours: [-1.0]Dark Blue [0.5] lightblue, [0.0] baby blue,  [0.5] Green, [1] Yellow, [1.5]Orange, [2.0]Dark Orange, [2.5]Red. 
+function fireballsDraw(){
+  var c = document.getElementById("myCanvas4");
+  var ctx5 = c.getContext("2d");
+  console.log(fireballs);
+  var fireballNum = 1;
+  document.getElementById("SSDTables").innerHTML += "<table class='neowsTables' id='SSDTABLE'><tr>" + "<th>I.D.</th><th>Date & Time</th><th>Total Impact Energy</th><th>Altitude</th><th>Velocity</th></tr>";
+  for (const [key, value] of Object.entries(fireballs)) {
+    var dataSet = value
+    //remove any fireballs with incomplete data to map.
+    if(dataSet[3] == null || dataSet[5] == null){
+      fireballNum += 1;
+    } else {
+    var date = dataSet[0];
+    var latitude = dataSet[3];
+    var latDir = dataSet[4];
+    var longitude = dataSet[5];
+    var longDir = dataSet[6];
+    var impactE = dataSet[2];
+    var altitude = dataSet[7];
+    var velocity = dataSet[8];
+    var latValue = 0;
+    var longValue = 0;
+    var colour = '';
+    //Yea due to certain calculation issues checks are in place to ensure nothing goes haywire.
+    if (latDir == 'N'){
+       latValue = (308 - Math.round(latitude*2.84))
+       if(latValue < 20){
+        latValue = 21;
+       }
+    } else {
+       latValue = (308 + Math.round(latitude*2.84));
+       if(latValue > 530){
+        latValue = 529;
+       }
+    }
+
+    if(longDir == 'E'){
+      longValue = Math.round(478 + (longitude*3.06))
+      if(longValue > 1004){
+        longValue = 1003;
+      }
+    } else {
+      longValue = Math.round(478 - (longitude*3.06))
+      if(longValue < 20){
+        longValue = 21;
+      }
+    }
+
+    if(impactE <= -1.0){
+      colour='#000080'
+    } else if(impactE > -1.0 && impactE <= -0.5){
+      colour='#0000FF';
+    } else if(impactE > -0.5 && impactE <= 0) { 
+      colour='#00FFFF';
+    } else if(impactE > 0 && impactE <= 0.5) {
+      colour='#00FF00';
+    } else if(impactE > 0.5 && impactE <= 1){
+      colour='#FFFF00';
+    } else if(impactE > 1 && impactE <= 1.5){
+      colour='#ff7f50';
+    } else if(impactE > 1.5 && impactE <= 2){
+      colour='#ff8c00';
+    } else if(impactE > 2){
+      colour='#b22222';
+    }
+
+    ctx5.beginPath();
+    ctx5.arc(longValue, latValue, 10, 0, 2 * Math.PI, false);
+    ctx5.fillStyle = colour;
+    ctx5.fill();
+    ctx5.lineWidth = 1;
+    ctx5.strokeStyle = '#000000';
+    ctx5.stroke();
+    if(fireballNum < 10){
+    ctx5.font = "10px Arial";
+    ctx5.strokeText(fireballNum, (longValue-3), (latValue+4));
+    } else {
+      ctx5.font = "10px Arial";
+      ctx5.strokeText(fireballNum, (longValue-6), (latValue+4));
+    }
+    document.getElementById("SSDTABLE").innerHTML += "<tr><td>" + fireballNum + "</td><td>" +  date + "</td><td>" + impactE + "</td><td>" + altitude + " km</td><td>" + velocity + " km/s</td></tr>";
+    fireballNum += 1; 
+    }
+  }
+  document.getElementById("SSDTABLE").innerHTML += "</table>"
+  /* activate to see 0 long and 0 lat 
+  ctx5.beginPath();
+  ctx5.moveTo(478, 500);
+  ctx5.lineTo(478, 10);
+  ctx5.stroke();
+  ctx5.beginPath();
+  ctx5.moveTo(0, 308);
+  ctx5.lineTo(1000, 308);
+  ctx5.stroke();
+  */
+}
+
+/* Sentry will go here, will swing back around to add it in fully
+function Sentry(){
+  document.getElementById("SSD").innerHTML = "loading...";
+  try{
+    fetch('https://ssd-api.jpl.nasa.gov/sentry.api?days=20')
+    .then(response=>response.json())
+    .then(json=>{
+      console.log(json);
+    })
+    document.getElementById("SSD").innerHTML = "Solar System Dynamics and Center for Near-Earth Object Studies";
+  }catch(error){
+    console.log(error)
+    document.getElementById("SSD").innerHTML = "Failed to Load.";
+  }
+}
+*/
+
+// Mars Rover Photos.
+
+roverDates(dateList);
+
+function roverDates(listDate){
+  console.log(dateList);
+  var select = document.getElementById("selectNumber2"); 
+  for(var i = listDate.length - 1; i >  (listDate.length-8); i--) {
+      var opt = listDate[i];
+      var el = document.createElement("option");
+      el.textContent = opt;
+      el.value = opt;
+      select.appendChild(el);
+  }
+}

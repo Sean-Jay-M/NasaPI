@@ -32,7 +32,67 @@
             <p class="paragraphs" id="asteroidPlotDesc"></p>
         </div>
         </div>
-  </div>
+    </div>
+    <button type="button" class="collapsible" id="SSD">Solar System Dynamics and Center for Near-Earth Object Studies</button>
+    <div class="content">
+        <p class="paragraphs" id="apoddesc" >Data relating to: Fireballs, Comet Close Approaches, Mission Design, NHATS, Scout and Sentry. <br><br><span style="font-weight: bold;">Fireball Data</span><br><span style="font-size: small;">Some Fireballs may be removed due to incomplete data. <br> Only displaying most recent 20.</span></p>
+        <canvas id="myCanvas4" width="1024" height="550" style="border:1px solid #d3d3d3; background-image:url('images/worldMap.png');"></canvas>
+        <p class="paragraphs" id="colour">Colour represents total impact energy (kt)</p>
+        <div id="colourDiv">
+            <table id="colourexp">
+            <td>
+            <svg width="20" height="20">
+                <rect x="0" y="0" width="20" height="20" style="fill:#000080;stroke:black;stroke-width:2;" />
+            </svg>
+            x &lt;= -1.0 KT
+            </td>
+            <td>
+            <svg width="20" height="20">
+                <rect x="0" y="0" width="20" height="20" style="fill:#0000FF;stroke:black;stroke-width:2;" />
+            </svg>
+            -1.0 to -0.5 KT
+            </td>
+            <td>
+            <svg width="20" height="20">
+                <rect x="0" y="0" width="20" height="20" style="fill:#00FFFF;stroke:black;stroke-width:2;" />
+            </svg>
+            -0.5 to 0 KT
+            </td>
+            <td>
+            <svg width="20" height="20">
+                <rect x="0" y="0" width="20" height="20" style="fill:#00FF00;stroke:black;stroke-width:2;" />
+            </svg>
+            0 to 0.5 KT
+            </td>
+            <td>
+            <svg width="20" height="20">
+                <rect x="0" y="0" width="20" height="20" style="fill:#FFFF00;stroke:black;stroke-width:2;" />
+            </svg>
+            0.5 to 1 KT
+            </td>
+            <td>
+            <svg width="20" height="20">
+                <rect x="0" y="0" width="20" height="20" style="fill:#ff7f50;stroke:black;stroke-width:2;" />
+            </svg>
+            1 to 1.5 KT
+            </td>
+            <td>
+            <svg width="20" height="20">
+                <rect x="0" y="0" width="20" height="20" style="fill:#ff8c00;stroke:black;stroke-width:2;" />
+            </svg>
+            1.5 to 2 KT
+            </td>
+            <td>
+            <svg width="20" height="20">
+                <rect x="0" y="0" width="20" height="20" style="fill:#b22222;stroke:black;stroke-width:2;" />
+            </svg>
+            x &gt;= 2 KT
+            </td>
+            </table>
+        </div>
+        <p class="paragraphs" id="SSD1"></p>
+        <div id="SSDTables"></div>
+    </div> 
     <button type="button" class="collapsible NEOWSC" id="NEOWS">Near Earth Object Web Service (NEOWS)</button>
     <div class="content">
         <p class="paragraphs" id="NEOWSP">The Near Earth Object Web Service or N.E.O.W.S provides deep data pertaining to Asteroids which come into close proximity to Earth. The API is maintained by the SpaceRocks Team.</p>
@@ -40,10 +100,6 @@
         <p class="paragraphs"></p>
         <p class="paragraphs"></p>
     </div>
-    <button type="button" class="collapsible" id="SSD">Solar System Dynamics and Center for Near-Earth Object Studies</button>
-    <div class="content">
-        <p class="paragraphs" id="apoddesc">Data relating to: Comet Close Approaches, Fireballs, Mission Design, NHATS, Scout and Sentry.</p>
-    </div> 
     <button type="button" class="collapsible">Exoplanet</button>
     <div class="content">
         <p class="paragraphs" id="apoddesc">NASA provides free and open access to its Exoplanet Archive, a collection of planets outside our Solar System.</p>
@@ -51,7 +107,7 @@
     <button type="button" class="collapsible" id="APOD">Astronomy Picture Of The Day (APOD)</button>
     <div class="content">
         <div id="image"></div>
-        <select id="selectNumber" onchange="newphoto(this);";></select>
+        <select id="selectNumber" onchange="newphoto(this);"></select>
         <p class="paragraphs" id="title"></p>
         <p class="paragraphs" id="error"></p>
         <p class="paragraphs" id="description"></p>
@@ -60,6 +116,7 @@
     <button type="button" class="collapsible">Mars Rover Photos</button>
     <div class="content">
         <p class="paragraphs" id="apoddesc">A Collection of Photos from the various Rovers which served on Mars.</p>
+        <select id="selectNumber2" onchange=""></select>
     </div> 
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>

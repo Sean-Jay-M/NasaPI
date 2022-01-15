@@ -34,7 +34,7 @@
   margin-left: 5%;
 }
 
-#myCanvas3{
+#myCanvas3, #myCanvas4{
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -48,6 +48,10 @@
   margin-right: auto;
   width: 34%;
   text-align: center;
+}
+
+#SSDTables{
+  margin-bottom: 1%;
 }
 
 #logo{
@@ -81,11 +85,17 @@
   margin-right: auto;
 }
 
-#apoddesc, #NEOWSP, #InSightDesc, #TempInfo{
+#apoddesc, #NEOWSP, #InSightDesc, #TempInfo, #colour{
   text-align: center;
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+#colourDiv{
+  display: block;
+  margin-left: 20%;
+  margin-right: 20%;
 }
 
 #ErrorMsg {
