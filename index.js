@@ -4,6 +4,9 @@ year();
 fetchData();
 inSightFetch();
 fireball();
+roverPhotoStartCuriosity();
+roverPhotoStartOppotunity();
+roverPhotoStartSpirit();
 neows(dateList);
 
 function fetchData(){
@@ -717,11 +720,9 @@ function Sentry(){
 */
 
 // Mars Rover Photos.
-
 roverDates(dateList);
-
 function roverDates(listDate){
-  console.log(dateList);
+  console.log(listDate);
   var select = document.getElementById("selectNumber2"); 
   for(var i = listDate.length - 1; i >  (listDate.length-8); i--) {
       var opt = listDate[i];
@@ -729,5 +730,50 @@ function roverDates(listDate){
       el.textContent = opt;
       el.value = opt;
       select.appendChild(el);
+  }
+}
+
+function roverPhotoStartCuriosity(){
+  document.getElementById("rover").innerHTML = "Loading....";
+  try{
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/latest_photos?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
+    .then(response=>response.json())
+    .then(json=>{
+      console.log(json);
+      var testphoto = json.latest_photos[0].img_src;
+      document.getElementById("curiosity").innerHTML = "<img src='" + testphoto + "' id='day_img'>";
+    })
+  }catch(error){
+    console.log(error)
+    document.getElementById("rover").innerHTML = "Failed to Load.";
+  }
+}
+
+function roverPhotoStartOppotunity(){
+  document.getElementById("rover").innerHTML = "Loading....";
+  try{
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/latest_photos?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
+    .then(response=>response.json())
+    .then(json=>{
+      console.log(json);
+    })
+  }catch(error){
+    console.log(error)
+    document.getElementById("rover").innerHTML = "Failed to Load.";
+  }
+}
+
+function roverPhotoStartSpirit(){
+  document.getElementById("rover").innerHTML = "Loading....";
+  try{
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/latest_photos?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
+    .then(response=>response.json())
+    .then(json=>{
+      console.log(json);
+    })
+    document.getElementById("rover").innerHTML = "Mars Rover Photos";
+  }catch(error){
+    console.log(error)
+    document.getElementById("rover").innerHTML = "Failed to Load.";
   }
 }
