@@ -596,7 +596,7 @@ function fireball(){
 //Latitudes Range from -90 to 90. They are horizontal. 0 is the equator, fairly easy unlike Longitudes. 
 //Longitudes range from -180 to 180. 0 Longitude goes right through Greenwhich England.
 //I cannot afford any of the mapping library options online, and therefore I will not purchase any
-//that -90 to 90 is 180. -180 to 80 is 260. Otherwise known as 90n and 90s and 180w and 180e
+//that -90 to 90 is 180. -180 to 180 is 360. Otherwise known as 90n and 90s and 180w and 180e
 //The map I have chosen has the mercator projection and has the dimensions of 1024 x 550. This unfortunately is a bit not great ! 
 // 550/180 = 3.06 . So roughly speaking every 3 verticle pixels is a new latitude. 
 // 1024/360 = 2.84. Therefore for every 3 horizontal pixels we have a new longitude. 
@@ -740,8 +740,14 @@ function roverPhotoStartCuriosity(){
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
-      var testphoto = json.latest_photos[0].img_src;
-      document.getElementById("curiosity").innerHTML = "<img src='" + testphoto + "' id='day_img'>";
+      var photo1 = json.latest_photos[0].img_src;
+      var photo2 = json.latest_photos[1].img_src;
+      var photo3 = json.latest_photos[2].img_src;
+      var photo4 = json.latest_photos[3].img_src;
+      document.getElementById("curiosity").innerHTML = "<img src='" + photo1 + "' id='curiosityPhoto'>";
+      document.getElementById("curiosity").innerHTML += "<img src='" + photo2 + "' id='curiosityPhoto'>";
+      document.getElementById("curiosity").innerHTML += "<img src='" + photo3 + "' id='curiosityPhoto'>";
+      document.getElementById("curiosity").innerHTML += "<img src='" + photo4 + "' id='curiosityPhoto'>";
     })
   }catch(error){
     console.log(error)
