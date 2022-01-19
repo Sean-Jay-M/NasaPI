@@ -1,5 +1,6 @@
 //APOD - this section is pretty easy to understand, not much documentation required.
 var dateList = []
+var roverList = ["opportunity", "spirit", "curiosity"];
 year();
 fetchData();
 inSightFetch();
@@ -51,7 +52,7 @@ function year(){
     };
 
     var select = document.getElementById("selectNumber"); 
-    for(var i = listDate.length - 1; i > 0; i--) {
+    for(var i = 0; i < listDate.length; i++) {
         var opt = listDate[i];
         var el = document.createElement("option");
         el.textContent = opt;
@@ -487,7 +488,7 @@ function inSightFetch(){
       console.log(json);
       solKey = json.sol_keys[0];
       if (typeof solKey == 'undefined'){
-        document.getElementById("ErrorMsg").innerHTML = " WARNING: Some or all of the Data for the current Day(Sol) has not been received from the Rover or API. Possibly due to intense weather conditions on Mars.";
+        document.getElementById("ErrorMsg").innerHTML = " WARNING: Some or all of the Data for the current Day(Sol) has not been received from the Rover or API. Possibly due to intense weather conditions on Mars. This Rover may fail soon, due to battery issues on Mars.";
         console.log("Visit this link to easily view if data present: " + "https://api.nasa.gov/assets/insight/insight_mars_wind_rose.html" + " This message has been shown due to a lack of Data from the API or Rover.");
         document.getElementById("InSightDesc").innerHTML = "";
         document.getElementById("TempInfo").innerHTML = "";
@@ -720,12 +721,12 @@ function Sentry(){
 */
 
 // Mars Rover Photos.
-roverDates(dateList);
-function roverDates(listDate){
-  console.log(listDate);
+roverDates(roverList);
+function roverDates(roverList){
+  console.log(roverList);
   var select = document.getElementById("selectNumber2"); 
-  for(var i = listDate.length - 1; i >  (listDate.length-8); i--) {
-      var opt = listDate[i];
+  for(var i = roverList.length - 1; i > -1 ; i--) {
+      var opt = roverList[i];
       var el = document.createElement("option");
       el.textContent = opt;
       el.value = opt;
@@ -740,14 +741,13 @@ function roverPhotoStartCuriosity(){
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
-      var photo1 = json.latest_photos[0].img_src;
-      var photo2 = json.latest_photos[1].img_src;
-      var photo3 = json.latest_photos[2].img_src;
-      var photo4 = json.latest_photos[3].img_src;
-      document.getElementById("curiosity").innerHTML = "<img src='" + photo1 + "' id='curiosityPhoto'>";
-      document.getElementById("curiosity").innerHTML += "<img src='" + photo2 + "' id='curiosityPhoto'>";
-      document.getElementById("curiosity").innerHTML += "<img src='" + photo3 + "' id='curiosityPhoto'>";
-      document.getElementById("curiosity").innerHTML += "<img src='" + photo4 + "' id='curiosityPhoto'>";
+      var photo1 = json
+      var CuriosityList = [];
+      for(let i = 0; i < json.latest_photos.length-1; i++){
+        photo1 = json.latest_photos[i].img_src;
+        document.getElementById("curiosity").innerHTML += "<img src='" + photo1 + "' id='curiosityPhoto' style='height: 20%; width: 20%; display: inline-block; margin-right: 5px;'>";
+        CuriosityList += photo1 
+      }
     })
   }catch(error){
     console.log(error)
