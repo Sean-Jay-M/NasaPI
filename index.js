@@ -6,8 +6,6 @@ fetchData();
 inSightFetch();
 fireball();
 roverPhotoStartCuriosity();
-roverPhotoStartOppotunity();
-roverPhotoStartSpirit();
 neows(dateList);
 
 function fetchData(){
@@ -59,7 +57,7 @@ function year(){
         el.value = opt;
         select.appendChild(el);
     }
-    dateList = listDate;
+  dateList = listDate;
 }
 
 function sleep(ms) {
@@ -721,33 +719,22 @@ function Sentry(){
 */
 
 // Mars Rover Photos.
-roverDates(roverList);
-function roverDates(roverList){
-  console.log(roverList);
-  var select = document.getElementById("selectNumber2"); 
-  for(var i = roverList.length - 1; i > -1 ; i--) {
-      var opt = roverList[i];
-      var el = document.createElement("option");
-      el.textContent = opt;
-      el.value = opt;
-      select.appendChild(el);
-  }
-}
-
 function roverPhotoStartCuriosity(){
-  document.getElementById("rover").innerHTML = "Loading....";
   try{
     fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/latest_photos?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
       var photo1 = json
-      var CuriosityList = [];
-      for(let i = 0; i < json.latest_photos.length-1; i++){
-        photo1 = json.latest_photos[i].img_src;
-        document.getElementById("curiosity").innerHTML += "<img src='" + photo1 + "' id='curiosityPhoto' style='height: 20%; width: 20%; display: inline-block; margin-right: 5px;'>";
-        CuriosityList += photo1 
-      }
+      document.getElementById("opportunity").innerHTML = "";
+      document.getElementById("curiosity").innerHTML =  ''
+      var counter = 0;
+        for(let i = 0; i < json.latest_photos.length-1; i++){
+          photo1 = json.latest_photos[i].img_src;
+          document.getElementById("curiosity").innerHTML += "<img src='" + photo1 + "' id='curiosityPhoto' style='height: 20%; width: 20%; display: inline-block; margin-right: 5px;'>";
+          counter += 1;
+        }
+        document.getElementById("roverDesc").innerHTML = 'A Collection of Photos from the various Rovers which served on Mars. <br><br><span style="font-weight: bold;"> Curiosity:</span> <br><br> Curiosity is a car sized rover which began its mission in 2012 its mission is to explore the Gale crater on Mars. <br> Here is a selection of the most recent photographs from this rover.';
     })
   }catch(error){
     console.log(error)
@@ -758,10 +745,20 @@ function roverPhotoStartCuriosity(){
 function roverPhotoStartOppotunity(){
   document.getElementById("rover").innerHTML = "Loading....";
   try{
-    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/latest_photos?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?earth_date=2018-6-9&api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
+      var photo1 = json
+      document.getElementById("opportunity").innerHTML = "";
+      document.getElementById("curiosity").innerHTML =  ''
+      for(let i = 0; i < json.photos.length; i++){
+        photo1 = json.photos[i].img_src;
+        document.getElementById("curiosity").innerHTML += "<img src='" + photo1 + "' id='curiosityPhoto' style='height: 20%; width: 20%; display: inline-block; margin-right: 5px;'>";
+      }
+      document.getElementById("roverDesc").innerHTML =  'A Collection of Photos from the various Rovers which served on Mars. <br><br><span style="font-weight: bold;"> Opportunity:</span> <br><br> Opportunity was a Rover which landed on mars in 2004, for a 90 day mission. Those 90 days turned into 14 years. Opportunity\'s last message was: <br><br> \'My battery is low and it is getting dark\' <br><br> Received on the 10th of June 2018 (Sol 5111), sent from Perseverence Valley. <br> Here are the last photos received from the much loved Rover.'
+      document.getElementById("opportunity").innerHTML += "<img src='images/opp1.jpg' id='curiosityPhoto' style='height: 30%; width: 30%; display: inline-block; margin-right: 5px;'>";
+      document.getElementById("opportunity").innerHTML += "<img src='images/opp2.jpg' id='curiosityPhoto' style='height: 35%; width: 35%; display: inline-block; margin-right: 5px;'>";
     })
   }catch(error){
     console.log(error)
@@ -776,10 +773,43 @@ function roverPhotoStartSpirit(){
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
+      var photo1 = json
+      var CuriosityList = [];
+      document.getElementById("opportunity").innerHTML = "";
+      document.getElementById("curiosity").innerHTML =  ''
+      for(let i = 0; i < json.latest_photos.length-1; i++){
+        photo1 = json.latest_photos[i].img_src;
+        document.getElementById("curiosity").innerHTML += "<img src='" + photo1 + "' id='curiosityPhoto' style='height: 20%; width: 20%; display: inline-block; margin-right: 5px;'>";
+        CuriosityList += photo1 
+      }
+      document.getElementById("roverDesc").innerHTML = 'A Collection of Photos from the various Rovers which served on Mars. <br><br><span style="font-weight: bold;"> Spirit:</span> <br><br> Spirit was another Rover which landed on mars in 2004, for a 90 day mission brother to Opporunity, which extended to 6 years till 2010. <br> The Rovers batteries died after getting stuck in a sandtrap, marking the completion of its mission.  Here are the Rovers Final Photos.'
     })
-    document.getElementById("rover").innerHTML = "Mars Rover Photos";
   }catch(error){
     console.log(error)
     document.getElementById("rover").innerHTML = "Failed to Load.";
+  }
+}
+
+async function newRover(rover){
+  var roverC = rover;
+  if(roverC === "curiosity"){
+    document.getElementById("rover").innerHTML = "Loading....";
+    document.getElementById("rover").click();
+    roverPhotoStartCuriosity();
+    await sleep(1000)
+    document.getElementById("rover").innerHTML = "Mars Rover Photos";
+    document.getElementById("rover").click();
+  } else if (roverC === "spirit") {
+    document.getElementById("rover").click();
+    roverPhotoStartSpirit();
+    await sleep(1000)
+    document.getElementById("rover").innerHTML = "Mars Rover Photos";
+    document.getElementById("rover").click();
+  } else if (roverC === "opportunity"){
+    document.getElementById("rover").click();
+    roverPhotoStartOppotunity();
+    await sleep(1000)
+    document.getElementById("rover").innerHTML = "Mars Rover Photos";
+    document.getElementById("rover").click();
   }
 }

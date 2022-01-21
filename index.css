@@ -13,6 +13,14 @@
     margin-right: auto;
 }
 
+#roverDesc{
+  text-align: center;
+}
+
+#opportunity{
+  margin-left: 27.8%;
+}
+
 #curiosity{
   display: block;
 }
@@ -225,6 +233,15 @@
 .Astbutton:hover {
   background-color: #4CAF50; /* Green */
   color: white;
+}
+
+#roverButtons{
+  display: block;
+  margin-left: 40%;
+}
+
+#roverBut{
+  display: inline-block;
 }
 
 /* Modal */

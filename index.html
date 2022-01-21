@@ -115,11 +115,14 @@
     </div>
     <button type="button" class="collapsible" id="rover">Mars Rover Photos</button>
     <div class="content">
-        <p class="paragraphs" id="apoddesc">A Collection of Photos from the various Rovers which served on Mars. <br><br><span style="font-weight: bold;"> Curiosity:</span> <br><br> Curiosity is a car sized rover which began its mission in 2012 its mission is to explore the Gale crater on Mars. <br> Here is a selection of the most recent photographs from this rover.</p>
-        <select id="selectNumber2" onchange=""></select>
+        <p class="paragraphs" id="roverDesc">A Collection of Photos from the various Rovers which served on Mars. <br><br><span style="font-weight: bold;"> Curiosity:</span> <br><br> Curiosity is a car sized rover which began its mission in 2012 its mission is to explore the Gale crater on Mars. <br> Here is a selection of the most recent photographs from this rover.</p>
+        <div id="roverButtons">
+            <button type='button' class='Astbutton' id="roverBut" onclick='newRover("curiosity")'>Curiosity</button> <button type='button' class='Astbutton' id="roverBut" onclick='newRover("spirit")'>Spirit</button> <button type='button' class='Astbutton' id="roverBut" onclick='newRover("opportunity")'>Opportunity</button>
+        </div>
         <div id="ye">
             <div id="curiosity"></div>
         </div>
+        <div id="opportunity"></div>
     </div> 
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
