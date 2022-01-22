@@ -769,7 +769,7 @@ function roverPhotoStartOppotunity(){
 function roverPhotoStartSpirit(){
   document.getElementById("rover").innerHTML = "Loading....";
   try{
-    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/latest_photos?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?earth_date=2010-2-1&api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
@@ -777,12 +777,12 @@ function roverPhotoStartSpirit(){
       var CuriosityList = [];
       document.getElementById("opportunity").innerHTML = "";
       document.getElementById("curiosity").innerHTML =  ''
-      for(let i = 0; i < json.latest_photos.length-1; i++){
-        photo1 = json.latest_photos[i].img_src;
+      for(let i = 0; i < json.photos.length-1; i++){
+        photo1 = json.photos[i].img_src;
         document.getElementById("curiosity").innerHTML += "<img src='" + photo1 + "' id='curiosityPhoto' style='height: 20%; width: 20%; display: inline-block; margin-right: 5px;'>";
         CuriosityList += photo1 
       }
-      document.getElementById("roverDesc").innerHTML = 'A Collection of Photos from the various Rovers which served on Mars. <br><br><span style="font-weight: bold;"> Spirit:</span> <br><br> Spirit was another Rover which landed on mars in 2004, for a 90 day mission brother to Opporunity, which extended to 6 years till 2010. <br> The Rovers batteries died after getting stuck in a sandtrap, marking the completion of its mission.  Here are the Rovers Final Photos.'
+      document.getElementById("roverDesc").innerHTML = 'A Collection of Photos from the various Rovers which served on Mars. <br><br><span style="font-weight: bold;"> Spirit:</span> <br><br> Spirit was another Rover which landed on mars in 2004, for a 90 day mission brother to Opporunity, which extended to 6 years till 2010. <br> The Rovers batteries died after getting stuck in a sandtrap, marking the completion of its mission.  Here are some of the Rovers Final Photos.'
     })
   }catch(error){
     console.log(error)
