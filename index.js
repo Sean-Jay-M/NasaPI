@@ -10,7 +10,7 @@ neows(dateList);
 
 function fetchData(){
     try{
-      fetch('https://api.nasa.gov/planetary/apod?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ')
+      fetch('https://api.nasa.gov/planetary/apod?api_key=INSERTAPI')
       .then(response=>response.json())
       .then(json=>{
         console.log(json);
@@ -79,7 +79,7 @@ async function loading(time, div, replace){
 function newphoto(date){
   document.getElementById("APOD").click();
   document.getElementById("APOD").innerHTML = 'loading....';
-  var newapi = 'https://api.nasa.gov/planetary/apod?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ';
+  var newapi = 'https://api.nasa.gov/planetary/apod?api_key=INSERTAPI';
   newapi += "&date="
   newapi += date.value+ "&";
   console.log(newapi);
@@ -169,7 +169,7 @@ function neows(dateList){
   var today = dates[dates.length - 1];
   var pWeek = dates[dates.length - 7];
   var lastweek = dates.slice(-8);
-  var value= "https://api.nasa.gov/neo/rest/v1/feed?start_date=" + pWeek + "&end_date=" + today + "&api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ"
+  var value= "https://api.nasa.gov/neo/rest/v1/feed?start_date=" + pWeek + "&end_date=" + today + "INSERTAPI"
   try{
     fetch(value)
     .then(response=>response.json())
@@ -295,7 +295,7 @@ function neowsDescription(day, asteroid){
   var dates = dateList;
   var today = dates[dates.length - 1];
   var pWeek = dates[dates.length - 7];
-  var value= "https://api.nasa.gov/neo/rest/v1/feed?start_date=" + pWeek + "&end_date=" + today + "&api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ"
+  var value= "https://api.nasa.gov/neo/rest/v1/feed?start_date=" + pWeek + "&end_date=" + today + "INSERTAPI"
   fetch(value)
   .then(response=>response.json())
   .then(json=>{
@@ -480,7 +480,7 @@ var InSightData = {};
 function inSightFetch(){
   document.getElementById("InSight").innerHTML = "loading...";
   try{
-    fetch('https://api.nasa.gov/insight_weather/?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ&feedtype=json&ver=1.0')
+    fetch('https://api.nasa.gov/insight_weather/?api_key=INSERTAPI')
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
@@ -721,7 +721,7 @@ function Sentry(){
 // Mars Rover Photos.
 function roverPhotoStartCuriosity(){
   try{
-    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/latest_photos?api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/latest_photos?api_key=INSERTAPI') 
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
@@ -745,7 +745,7 @@ function roverPhotoStartCuriosity(){
 function roverPhotoStartOppotunity(){
   document.getElementById("rover").innerHTML = "Loading....";
   try{
-    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?earth_date=2018-6-9&api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?earth_date=2018-6-9&api_key=INSERTAPI') 
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
@@ -769,7 +769,7 @@ function roverPhotoStartOppotunity(){
 function roverPhotoStartSpirit(){
   document.getElementById("rover").innerHTML = "Loading....";
   try{
-    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?earth_date=2010-2-1&api_key=GDE3gez5LI92lZk0h8UxWyJVHTz6XyD1ta6OdMlQ') 
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?earth_date=2010-2-1&api_key=INSERTAPI') 
     .then(response=>response.json())
     .then(json=>{
       console.log(json);
