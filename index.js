@@ -1,4 +1,5 @@
 //APOD - this section is pretty easy to understand, not much documentation required.
+//Insert your own API Key
 var dateList = []
 var roverList = ["opportunity", "spirit", "curiosity"];
 year();
