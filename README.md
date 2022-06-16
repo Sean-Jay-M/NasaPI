@@ -1,5 +1,5 @@
 # NasaPI
-A webpage which displays data from multiple different Nasa API's which carry JSON Data. 
+A simple webpage which displays data from multiple different Nasa API's which carry JSON Data. 
 
 The intention of this website is not to be the most visually spectacular, but rather to further gain and show an understanding of json API's and Javascript.
 
